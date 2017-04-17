@@ -1,4 +1,7 @@
+'use strict';
+
 const chalk = require('chalk');
+const es = require('event-stream');
 const browserSync = require('browser-sync').create(); // for serving and livereloading
 
 // browserify and plugins
@@ -10,30 +13,30 @@ const gulp = require('gulp');
 const gutil = require('gulp-util');
 
 // task dependencies
-const building = require('./build');
+const build = require('./build');
 
 const PATHS = gulp.PATHS;
 
 function watchTemplates () {
   // watch html files
   gulp.watch(PATHS.html)
-    .on('change', () => building.buildTemplates());
-  return building.buildTemplates();
+    .on('change', () => build.buildTemplates());
+  return build.buildTemplates();
 }
 
 function watchScripts () {
   // watch source files
   watchify.args.debug = true;
   const watcher = watchify(browserify(PATHS.entry, watchify.args));
-  watcher.on('update', () => building.buildScripts(watcher));
+  watcher.on('update', () => build.buildScripts(watcher));
   watcher.on('log', gutil.log);
-  return building.buildScripts(watcher);
+  return build.buildScripts(watcher);
 }
 
 function watchStyles () {
   gulp.watch(PATHS.scss)
-    .on('change', () => building.buildStyles());
-  return building.buildStyles();
+    .on('change', () => build.buildStyles());
+  return build.buildStyles();
 }
 
 /**
@@ -54,7 +57,15 @@ function serve () {
     .on('change', () => browserSync.reload());
 }
 
-module.exports.serve = serve;
-module.exports.watchTemplates = watchTemplates;
-module.exports.watchScripts = watchScripts;
-module.exports.watchStyles = watchStyles;
+function run () {
+  console.log(chalk.blue('Running Watch'));
+  let scriptStrm = watchScripts();
+  let htmlStrm = watchTemplates();
+  let styleStrm = watchStyles();
+  // serve after all streams finish (after first build)
+  return es.merge(scriptStrm, htmlStrm, styleStrm)
+    .on('end', () => serve())
+    .on('error', (error) => console.log(chalk.red('Error watching:', error)));
+}
+
+module.exports.run = run;

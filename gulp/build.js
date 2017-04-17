@@ -1,8 +1,12 @@
+'use strict';
+
 const chalk = require('chalk');
+const es = require('event-stream');
 const path = require('path');
 const exorcist = require('exorcist'); // for extracting sourcemaps from stream
 
 // browserify and plugins
+const browserify = require('browserify'); // bundler to allow the use commonjs/ES6 imports in browser code
 const babelify = require('babelify'); // browserify wrapper for babel
 
 // gulp and plugins
@@ -49,6 +53,15 @@ function buildStyles () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
+function run () {
+  console.log(chalk.blue('Running Build'));
+  let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }));
+  let htmlStrm = buildTemplates();
+  let styleStrm = buildStyles();
+  return es.merge(scriptStrm, htmlStrm, styleStrm);
+}
+
 module.exports.buildTemplates = buildTemplates;
 module.exports.buildScripts = buildScripts;
 module.exports.buildStyles = buildStyles;
+module.exports.run = run;
