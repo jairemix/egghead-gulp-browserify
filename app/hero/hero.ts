@@ -1,7 +1,3 @@
-export function greet (name: String) {
-  console.log(`Hello ${name}`);
-};
-
 export class Hero {
   private name: String;
   private alias: String;

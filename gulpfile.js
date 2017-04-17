@@ -3,7 +3,7 @@
 const gulp = require('gulp');
 
 const PATHS = gulp.PATHS = {
-  entry: './app/scripts/app.ts', // script entry
+  entry: './app/app.ts', // script entry
   global: [
     './bower_components/angular/angular.js',
     './bower_components/angular-animate/angular-animate.js',

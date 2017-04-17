@@ -34,7 +34,7 @@ function buildTemplates () {
 * TODO add source maps
 */
 function buildGlobalScripts () {
-  console.log(chalk.green('Bundling Global Scripts'));
+  console.log(chalk.green('Concatenating Global Scripts'));
   return gulp.src(PATHS.global)
     .pipe(debug())
     .pipe(concat('global.js'))
