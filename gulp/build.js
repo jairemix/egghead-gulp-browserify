@@ -29,9 +29,10 @@ function buildTemplates () {
 function buildScripts (bundler) {
   console.log(chalk.green('Bundling Scripts'));
   return bundler
-    .transform(babelify.configure({
-      presets: ['es2015']
-    }))
+    .transform(babelify)
+    // .transform(babelify.configure( // specified in .babelrc
+    //   { presets: ['es2015'] }
+    // ))
     .bundle()
     .on('error', (e) => {
       gutil.log(e);
