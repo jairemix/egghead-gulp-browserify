@@ -3,7 +3,7 @@
 const gulp = require('gulp');
 
 const PATHS = gulp.PATHS = {
-  entry: './app/scripts/app.js', // script entry
+  entry: './app/scripts/app.ts', // script entry
   dist: './www',
   html: ['./app/**/*.html'],
   scss: './app/styles.scss', // scss entry

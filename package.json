@@ -23,6 +23,8 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-util": "^3.0.8",
     "path": "^0.12.7",
+    "tsify": "^3.0.1",
+    "typescript": "^2.2.2",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0"
   },
