@@ -5,9 +5,10 @@ const browserify = require('browserify'); // bundler to allow the use commonjs/E
 const es = require('event-stream');
 
 const PATHS = gulp.PATHS = {
-  entry: './app/scripts/app.js',
-  dest: './www',
+  entry: './app/scripts/app.js', // script entry
+  dist: './www',
   html: ['./app/**/*.html'],
+  scss: './app/styles.scss', // scss entry
   root: __dirname
 };
 
@@ -22,8 +23,9 @@ const watch = require('./gulp/watch');
 gulp.task('watch', () => {
   let scriptStrm = watch.watchScripts();
   let htmlStrm = watch.watchTemplates();
+  let styleStrm = watch.watchStyles();
   // serve after two streams finish (after first build)
-  return es.merge(scriptStrm, htmlStrm)
+  return es.merge(scriptStrm, htmlStrm, styleStrm)
     .on('end', () => watch.serve())
     .on('error', (error) => console.log(chalk.red('Error watching:', error)));
 });
@@ -34,7 +36,8 @@ gulp.task('watch', () => {
 gulp.task('build', () => {
   let scriptStrm = build.buildScripts(browserify(PATHS.entry));
   let htmlStrm = build.buildTemplates();
-  return es.merge(scriptStrm, htmlStrm);
+  let styleStrm = build.buildStyles();
+  return es.merge(scriptStrm, htmlStrm, styleStrm);
 });
 
 /**

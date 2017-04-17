@@ -14,6 +14,13 @@ const building = require('./build');
 
 const PATHS = gulp.PATHS;
 
+function watchTemplates () {
+  // watch html files
+  gulp.watch(PATHS.html)
+    .on('change', () => building.buildTemplates());
+  return building.buildTemplates();
+}
+
 function watchScripts () {
   // watch source files
   watchify.args.debug = true;
@@ -23,11 +30,10 @@ function watchScripts () {
   return building.buildScripts(watcher);
 }
 
-function watchTemplates () {
-  // watch html files
-  gulp.watch(PATHS.html)
-    .on('change', () => building.buildTemplates());
-  return building.buildTemplates();
+function watchStyles () {
+  gulp.watch(PATHS.scss)
+    .on('change', () => building.buildStyles());
+  return building.buildStyles();
 }
 
 /**
@@ -37,17 +43,18 @@ function serve () {
   console.log(chalk.green('Serving'));
   browserSync.init({
     server: {
-      baseDir: PATHS.dest
+      baseDir: PATHS.dist
     },
     port: 8080,
     logFileChanges: false
   });
 
   // hook in browsersync to the watch
-  gulp.watch(`${PATHS.dest}/**/*.*`)
+  gulp.watch(`${PATHS.dist}/**/*.*`)
     .on('change', () => browserSync.reload());
 }
 
 module.exports.serve = serve;
-module.exports.watchScripts = watchScripts;
 module.exports.watchTemplates = watchTemplates;
+module.exports.watchScripts = watchScripts;
+module.exports.watchStyles = watchStyles;

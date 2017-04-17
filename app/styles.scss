@@ -1,0 +1,14 @@
+@import './styles/_colors.scss';
+
+body {
+  background-color: $background1;
+  padding: 20px;
+}
+
+.test-class {
+  transform: translateY(-5px);
+}
+
+.header {
+  font-weight: 600;
+}
