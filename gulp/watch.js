@@ -52,9 +52,14 @@ function serve () {
     logFileChanges: false
   });
 
-  // hook in browsersync to the watch
-  gulp.watch(`${PATHS.dist}/**/*.*`)
-    .on('change', () => browserSync.reload());
+  // livereload
+  gulp.watch([`${PATHS.dist}/**/*.*`, `!${PATHS.dist}/**/*.css`, `!${PATHS.dist}/**/*.css.map`]) // all but css and css sourcemaps
+    .on('change', (evt) => browserSync.reload());
+  gulp.watch([`${PATHS.dist}/**/*.css`]) // `${PATHS.dist}/**/*.css.map` // cannot reload when sourcemaps are regenerated, otherwise reloads
+    .on('change', (evt) => {
+      // console.log('css changed: injecting', evt.path);
+      gulp.src(evt.path).pipe(browserSync.stream());
+    });
 }
 
 function run () {
