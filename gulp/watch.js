@@ -64,11 +64,12 @@ function serve () {
 
 function run () {
   console.log(chalk.blue('Running Watch'));
+  let globalStrm = build.buildGlobalScripts(); // not watched
   let scriptStrm = watchScripts();
   let htmlStrm = watchTemplates();
   let styleStrm = watchStyles();
   // serve after all streams finish (after first build)
-  return es.merge(scriptStrm, htmlStrm, styleStrm)
+  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm)
     .on('end', () => serve())
     .on('error', (error) => console.log(chalk.red('Error watching:', error)));
 }

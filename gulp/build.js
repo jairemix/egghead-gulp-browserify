@@ -12,6 +12,7 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
+const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
 const source = require('vinyl-source-stream'); // for converting browserify stream to gulp stream
 const debug = require('gulp-debug'); // debugging: shows file in gulp stream
@@ -25,6 +26,18 @@ function buildTemplates () {
   console.log(chalk.green('Copying Templates'));
   return gulp.src(PATHS.html)
     // .pipe(debug())
+    .pipe(gulp.dest(PATHS.dist));
+}
+
+/**
+* TODO Temporary fix to be replaced by browserify-shim
+* TODO add source maps
+*/
+function buildGlobalScripts () {
+  console.log(chalk.green('Bundling Global Scripts'));
+  return gulp.src(PATHS.global)
+    .pipe(debug())
+    .pipe(concat('global.js'))
     .pipe(gulp.dest(PATHS.dist));
 }
 
@@ -63,13 +76,15 @@ function buildStyles () {
 
 function run () {
   console.log(chalk.blue('Running Build'));
+  let globalStrm = buildGlobalScripts();
   let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }));
   let htmlStrm = buildTemplates();
   let styleStrm = buildStyles();
-  return es.merge(scriptStrm, htmlStrm, styleStrm);
+  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm);
 }
 
 module.exports.buildTemplates = buildTemplates;
+module.exports.buildGlobalScripts = buildGlobalScripts;
 module.exports.buildScripts = buildScripts;
 module.exports.buildStyles = buildStyles;
 module.exports.run = run;
