@@ -35,9 +35,10 @@ function buildScripts (bundler) {
       target: 'es5' // also possible to use tsify with babelify if es6 is specified here
     })
     .on('error', e => console.log(chalk.red('tsify error', e)))
-    // .transform(babelify.configure({
-    //   presets: ['es2015']
-    // }))
+    // .transform(babelify)
+    // .transform(babelify.configure( // specified in .babelrc
+    //   { presets: ['es2015'] }
+    // ))
     .bundle()
     .on('error', (e) => {
       console.log(chalk.red('bundle error', e));
