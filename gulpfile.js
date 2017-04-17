@@ -4,13 +4,13 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const debug = require('gulp-debug');
 const watchify = require('watchify');
-
-// needed to convert the browserify stream and turn it into a gulp stream
+const browserSync = require('browser-sync').create();
 
 const paths = gulp.paths = {
   entry: './app/scripts/app.js',
-  html: ['./app/**/*.html']
-}
+  html: ['./app/**/*.html'],
+  dest: './www'
+};
 
 function bundleScripts (bundler) {
   return bundler
@@ -19,7 +19,20 @@ function bundleScripts (bundler) {
       gutil.log(e);
     })
     .pipe(source('app.js'))
+    // needed to convert the browserify stream and turn it into a gulp stream
     .pipe(gulp.dest('./www'));
+}
+
+function serve () {
+  browserSync.init({
+    server: {
+      baseDir: paths.dest
+    },
+    logFileChanges: false
+  });
+
+  gulp.watch(`${paths.dest}/**/*.*`)
+    .on('change', () => browserSync.reload());
 }
 
 gulp.task('scripts', () => {
@@ -31,6 +44,7 @@ gulp.task('watch', () => {
   bundleScripts(watcher);
   watcher.on('update', () => bundleScripts(watcher));
   watcher.on('log', gutil.log);
+  serve();
 });
 
 gulp.task('templates', () => {
