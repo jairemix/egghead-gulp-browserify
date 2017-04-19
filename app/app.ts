@@ -1,12 +1,5 @@
-// 3 ways of declaring a global variable
-// 1. declare in .d.ts file (only necessary in entry file)
 /// <reference path="globals.d.ts" />
-
-// 2. upcast window object
-// const angular = (window as any).angular;
-
-// 3. use declare keyword
-// declare const angular: any;
+/// <reference path="../typings/index.d.ts" />
 
 import { Hero } from './hero/hero';
 import app from './main/main.module';
@@ -18,4 +11,8 @@ app.run(() => {
   console.log('app running');
 });
 
+console.log('angular', angular);
+console.log('ionic', ionic);
+console.log('window.ionic', window.ionic);
 console.log('window.angular', window.angular);
+console.log('window.cordova', window.cordova);

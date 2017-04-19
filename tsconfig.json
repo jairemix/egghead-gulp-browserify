@@ -4,5 +4,13 @@
     "noImplicitAny": false,
     "removeComments": true
   },
-  "compileOnSave": false
+  "compileOnSave": false,
+  "include": [
+    "app/**/*",
+    "typings/**/*"
+  ],
+  "exclude": [
+    "bower_components",
+    "node_modules"
+  ]
 }

@@ -1,8 +1,7 @@
-import * as _angular from 'angular';
-
-declare global {
-  const angular: typeof _angular
-  interface Window {
-    angular: typeof _angular
-  }
+interface Window {
+  angular: typeof angular
+  ionic: typeof ionic
+  cordova: any
 }
+
+// declare const cordova: any;
