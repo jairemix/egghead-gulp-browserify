@@ -41,13 +41,18 @@ function buildGlobalScripts () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
-function buildScripts (bundler) {
+/**
+* @arg bundler        bundler or watcher
+* @arg applyPlugins   boolean (plugins should be applied only once!)
+*/
+function buildScripts (bundler, applyPlugins) {
   console.log(chalk.green('Bundling Scripts'));
-  return bundler
-    .plugin(tsify, {
+  if (applyPlugins) {
+    bundler.plugin(tsify, {
       target: 'es5' // also possible to use tsify with babelify if es6 is specified here
-    })
-    .on('error', e => console.log(chalk.red('tsify error', e)))
+    });
+  }
+  return bundler
     // .transform(babelify, {
     //   presets: ['es2015'], // also specified in .babelrc
     //   extensions: ['js', '.ts'] // still in ts format
@@ -77,7 +82,7 @@ function buildStyles () {
 function run () {
   console.log(chalk.blue('Running Build'));
   let globalStrm = buildGlobalScripts();
-  let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }));
+  let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
   let htmlStrm = buildTemplates();
   let styleStrm = buildStyles();
   return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm);

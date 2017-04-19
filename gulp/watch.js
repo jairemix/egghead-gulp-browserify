@@ -27,10 +27,14 @@ function watchTemplates () {
 function watchScripts () {
   // watch source files
   watchify.args.debug = true;
-  const watcher = watchify(browserify(PATHS.entry, watchify.args));
-  watcher.on('update', () => build.buildScripts(watcher));
+  const bundler = browserify(PATHS.entry, watchify.args);
+  const watcher = watchify(bundler);
+  watcher.on('update', (updated) => {
+    console.log(chalk.blue(updated));
+    build.buildScripts(watcher, false);
+  });
   watcher.on('log', gutil.log);
-  return build.buildScripts(watcher);
+  return build.buildScripts(watcher, true);
 }
 
 function watchStyles () {
