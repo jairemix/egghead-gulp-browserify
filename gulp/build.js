@@ -12,6 +12,8 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
+// const gulpStreamToPromise = require('gulp-stream-to-promise');
+const flatmap = require('gulp-flatmap');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
@@ -88,16 +90,27 @@ function buildAssets () {
 // TODO how to return inner stream??
 function run () {
   console.log(chalk.blue('Running Build'));
+  // gulp.src(PATHS.dist, { read: false })
+  //   .pipe(clean())
+  //   .on('end', () => {
+  //     let globalStrm = buildGlobalScripts();
+  //     let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
+  //     let htmlStrm = buildTemplates();
+  //     let styleStrm = buildStyles();
+  //     let assetStrm = buildAssets();
+  //     return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
+  //   });
   return gulp.src(PATHS.dist, { read: false })
     .pipe(clean())
-    .on('end', () => {
+    .pipe(flatmap((stream, file) => { // NOTE careful around flatmap as it runs the callback for every file in the stream (only one folder in PATHS.dist so we're safe here)
+      console.log(chalk.magenta('Finished cleaning'));
       let globalStrm = buildGlobalScripts();
       let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
       let htmlStrm = buildTemplates();
       let styleStrm = buildStyles();
       let assetStrm = buildAssets();
       return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
-    });
+    }));
 }
 
 module.exports.buildTemplates = buildTemplates;
