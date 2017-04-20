@@ -12,8 +12,8 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
-// const gulpStreamToPromise = require('gulp-stream-to-promise');
 const flatmap = require('gulp-flatmap');
+// const sequence = require('run-sequence');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
@@ -87,19 +87,9 @@ function buildAssets () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
-// TODO how to return inner stream??
 function run () {
   console.log(chalk.blue('Running Build'));
-  // gulp.src(PATHS.dist, { read: false })
-  //   .pipe(clean())
-  //   .on('end', () => {
-  //     let globalStrm = buildGlobalScripts();
-  //     let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
-  //     let htmlStrm = buildTemplates();
-  //     let styleStrm = buildStyles();
-  //     let assetStrm = buildAssets();
-  //     return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
-  //   });
+  // method 1
   return gulp.src(PATHS.dist, { read: false })
     .pipe(clean())
     .pipe(flatmap((stream, file) => { // NOTE careful around flatmap as it runs the callback for every file in the stream (only one folder in PATHS.dist so we're safe here)
@@ -111,6 +101,20 @@ function run () {
       let assetStrm = buildAssets();
       return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
     }));
+  // method 2
+  // gulp.task('clean', () => {
+  //   return gulp.src(PATHS.dist, { read: false })
+  //     .pipe(clean());
+  // });
+  // gulp.task('build-body', () => {
+  //   let globalStrm = buildGlobalScripts();
+  //   let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
+  //   let htmlStrm = buildTemplates();
+  //   let styleStrm = buildStyles();
+  //   let assetStrm = buildAssets();
+  //   return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
+  // });
+  // sequence('clean', 'build-body');
 }
 
 module.exports.buildTemplates = buildTemplates;
