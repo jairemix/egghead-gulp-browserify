@@ -15,6 +15,7 @@ const PATHS = gulp.PATHS = {
   dist: './www',
   html: ['./app/**/*.html'],
   scss: './app/styles.scss', // scss entry
+  assets: ['app/*/images/**/*', 'app/*/fonts/**/*', 'app/*/data/**/*'],
   root: __dirname
 };
 

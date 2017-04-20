@@ -12,6 +12,7 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
+// const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
 const source = require('vinyl-source-stream'); // for converting browserify stream to gulp stream
@@ -37,7 +38,7 @@ function buildGlobalScripts () {
   console.log(chalk.green('Concatenating Global Scripts'));
   return gulp.src(PATHS.global)
     .pipe(debug())
-    .pipe(concat('global.js'))
+    .pipe(concat('globals.js'))
     .pipe(gulp.dest(PATHS.dist));
 }
 
@@ -79,17 +80,25 @@ function buildStyles () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
+function buildAssets () {
+  return gulp.src(PATHS.assets)
+    .pipe(gulp.dest(PATHS.dist));
+}
+
 function run () {
   console.log(chalk.blue('Running Build'));
+  // let cleanStrm = gulp.src(PATHS.dist, { read: false });
   let globalStrm = buildGlobalScripts();
   let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
   let htmlStrm = buildTemplates();
   let styleStrm = buildStyles();
-  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm);
+  let assetStrm = buildAssets();
+  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
 }
 
 module.exports.buildTemplates = buildTemplates;
 module.exports.buildGlobalScripts = buildGlobalScripts;
 module.exports.buildScripts = buildScripts;
 module.exports.buildStyles = buildStyles;
+module.exports.buildAssets = buildAssets;
 module.exports.run = run;

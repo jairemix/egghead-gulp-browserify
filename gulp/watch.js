@@ -43,6 +43,12 @@ function watchStyles () {
   return build.buildStyles();
 }
 
+function watchAssets () {
+  gulp.watch(PATHS.assets)
+    .on('change', () => build.buildAssets());
+  return build.buildAssets();
+}
+
 /**
 * TODO investigate browserSync watchOptions (as opposed to gulp.watch)
 */
@@ -72,8 +78,9 @@ function run () {
   let scriptStrm = watchScripts();
   let htmlStrm = watchTemplates();
   let styleStrm = watchStyles();
+  let assetStrm = watchAssets();
   // serve after all streams finish (after first build)
-  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm)
+  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm)
     .on('end', () => serve())
     .on('error', (error) => console.log(chalk.red('Error watching:', error)));
 }

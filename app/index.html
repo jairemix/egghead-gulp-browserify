@@ -4,13 +4,14 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body ng-app="ionicApp.main">
-    <div class="header">
-      This is the header
-    </div>
+
+    <ion-nav-bar class="bar-stable">
+      <ion-nav-back-button>
+      </ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-nav-view></ion-nav-view>
+
     <!-- TODO add cordova.js -->
-    <!-- <div id="content" ng-controller="HomeCtrl as home">
-      <div ng-include="'main/home/home.html'"></div>
-    </div> -->
     <script type="text/javascript" src="global.js"></script>
     <script type="text/javascript" src="app.js"></script>
   </body>
