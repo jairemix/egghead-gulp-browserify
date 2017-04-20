@@ -10,6 +10,7 @@ const watchify = require('watchify'); // better than gulp.watch for commonjs mod
 
 // gulp and plugins
 const gulp = require('gulp');
+const clean = require('gulp-clean');
 const gutil = require('gulp-util');
 
 // task dependencies
@@ -72,17 +73,22 @@ function serve () {
     });
 }
 
+// TODO how to return inner stream ??
 function run () {
   console.log(chalk.blue('Running Watch'));
-  let globalStrm = build.buildGlobalScripts(); // not watched
-  let scriptStrm = watchScripts();
-  let htmlStrm = watchTemplates();
-  let styleStrm = watchStyles();
-  let assetStrm = watchAssets();
-  // serve after all streams finish (after first build)
-  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm)
-    .on('end', () => serve())
-    .on('error', (error) => console.log(chalk.red('Error watching:', error)));
+  return gulp.src(PATHS.dist, { read: false })
+    .pipe(clean())
+    .on('end', () => {
+      let globalStrm = build.buildGlobalScripts(); // not watched
+      let scriptStrm = watchScripts();
+      let htmlStrm = watchTemplates();
+      let styleStrm = watchStyles();
+      let assetStrm = watchAssets();
+      // serve after all streams finish (after first build)
+      return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm)
+        .on('end', () => serve())
+        .on('error', (error) => console.log(chalk.red('Error watching:', error)));
+    });
 }
 
 module.exports.run = run;

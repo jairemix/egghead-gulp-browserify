@@ -12,7 +12,7 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
-// const clean = require('gulp-clean');
+const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
 const source = require('vinyl-source-stream'); // for converting browserify stream to gulp stream
@@ -85,15 +85,19 @@ function buildAssets () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
+// TODO how to return inner stream??
 function run () {
   console.log(chalk.blue('Running Build'));
-  // let cleanStrm = gulp.src(PATHS.dist, { read: false });
-  let globalStrm = buildGlobalScripts();
-  let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
-  let htmlStrm = buildTemplates();
-  let styleStrm = buildStyles();
-  let assetStrm = buildAssets();
-  return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
+  return gulp.src(PATHS.dist, { read: false })
+    .pipe(clean())
+    .on('end', () => {
+      let globalStrm = buildGlobalScripts();
+      let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
+      let htmlStrm = buildTemplates();
+      let styleStrm = buildStyles();
+      let assetStrm = buildAssets();
+      return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
+    });
 }
 
 module.exports.buildTemplates = buildTemplates;
