@@ -17,6 +17,7 @@ const gutil = require('gulp-util');
 
 // task dependencies
 const build = require('./build');
+const localServer = require('./local-server');
 
 const PATHS = gulp.PATHS;
 
@@ -90,7 +91,10 @@ function run () {
       // serve after all streams finish (after first build)
       return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
     }))
-    .on('end', () => serve());
+    .on('end', () => {
+      localServer.run();
+      serve();
+    });
   // method 2
   // gulp.task('clean', () => {
   //   return gulp.src(PATHS.dist, { read: false })
@@ -104,8 +108,11 @@ function run () {
   //   let assetStrm = watchAssets();
   //   return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
   // });
-  // gulp.task('serve', serve);
-  // sequence('clean', 'watch-body', 'serve')
+  // gulp.task('watch-end', () => {
+  //   serve();
+  //   localServer.run();
+  // });
+  // sequence('clean', 'watch-body', 'watch-end')
 }
 
 module.exports.run = run;
