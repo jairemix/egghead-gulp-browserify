@@ -12,8 +12,7 @@ const tsify = require('tsify');
 
 // gulp and plugins
 const gulp = require('gulp');
-const flatmap = require('gulp-flatmap');
-// const sequence = require('run-sequence');
+const sequence = require('run-sequence');
 const clean = require('gulp-clean');
 const concat = require('gulp-concat');
 // const gutil = require('gulp-util');
@@ -87,36 +86,27 @@ function buildAssets () {
     .pipe(gulp.dest(PATHS.dist));
 }
 
-function run () {
-  console.log(chalk.blue('Running Build'));
-  // method 1
-  return gulp.src(PATHS.dist, { read: false })
-    .pipe(clean())
-    .pipe(flatmap((stream, file) => { // NOTE careful around flatmap as it runs the callback for every file in the stream (only one folder in PATHS.dist so we're safe here)
-      console.log(chalk.magenta('Finished cleaning'));
-      let globalStrm = buildGlobalScripts();
-      let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
-      let htmlStrm = buildTemplates();
-      let styleStrm = buildStyles();
-      let assetStrm = buildAssets();
-      return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
-    }));
-  // method 2
-  // gulp.task('clean', () => {
-  //   return gulp.src(PATHS.dist, { read: false })
-  //     .pipe(clean());
-  // });
-  // gulp.task('build-body', () => {
-  //   let globalStrm = buildGlobalScripts();
-  //   let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
-  //   let htmlStrm = buildTemplates();
-  //   let styleStrm = buildStyles();
-  //   let assetStrm = buildAssets();
-  //   return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
-  // });
-  // sequence('clean', 'build-body');
+function cleanBuild () {
+  console.log(chalk.magenta('Cleaning Build Folder'));
+  return gulp.src(PATHS.dist, { read : false })
+    .pipe(clean());
 }
 
+function run () {
+  console.log(chalk.blue('Running Build'));
+  gulp.task('pre-build', cleanBuild);
+  gulp.task('main-build', () => {
+    let globalStrm = buildGlobalScripts();
+    let scriptStrm = buildScripts(browserify(PATHS.entry, { debug: true }), true);
+    let htmlStrm = buildTemplates();
+    let styleStrm = buildStyles();
+    let assetStrm = buildAssets();
+    return es.merge(globalStrm, scriptStrm, htmlStrm, styleStrm, assetStrm);
+  });
+  sequence('pre-build', 'main-build');
+}
+
+module.exports.cleanBuild = cleanBuild;
 module.exports.buildTemplates = buildTemplates;
 module.exports.buildGlobalScripts = buildGlobalScripts;
 module.exports.buildScripts = buildScripts;
